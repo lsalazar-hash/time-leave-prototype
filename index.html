@@ -3,201 +3,740 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Time & Leave — Prototype</title>
+<title>Time &amp; Leave — Prototype</title>
 <style>
   :root {
     --navy: #002B49;
     --blue: #00A7E1;
     --purple: #613389;
+    --blue-dark: #1072B8;
     --gray: #6F7271;
     --gray-light: #B0B3B2;
-    --cyan: #5AEAFF;
-    --blue-dark: #1072B8;
-    --purple-light: #B098C4;
-    --red: #E5292B;
     --ink: #1D1D1B;
     --muted: #718096;
     --line: #E5E9EF;
-    --surface: #FFFFFF;
     --canvas: #F5F7FA;
-    --green: #16845B;
     font-family: "Open Sans", Arial, sans-serif;
     color: var(--ink);
   }
+
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--canvas); min-height: 100vh; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--canvas);
+  }
+
   button, input, select, textarea { font: inherit; }
   button { cursor: pointer; }
   .hidden { display: none !important; }
 
   /* Sign-in */
   .login-screen {
-    min-height: 100vh; display: grid; place-items: center; padding: 24px;
-    background: linear-gradient(140deg, var(--navy) 0%, #10496A 68%, var(--purple) 100%);
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: linear-gradient(140deg, var(--navy), #10496A 68%, var(--purple));
   }
+
   .login-card {
-    width: min(430px, 100%); background: white; border-radius: 20px;
-    padding: 38px; box-shadow: 0 22px 70px #001b3050;
+    width: min(430px, 100%);
+    padding: 38px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 22px 70px #001b3050;
   }
+
+  .brand-mark, .small-mark {
+    display: grid;
+    place-items: center;
+    color: white;
+    background: var(--blue);
+    font-weight: 800;
+  }
+
   .brand-mark {
-    width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center;
-    color: white; background: var(--blue); font-size: 22px; font-weight: 800;
+    width: 44px;
+    height: 44px;
     margin-bottom: 24px;
+    border-radius: 13px;
+    font-size: 22px;
   }
-  .login-card h1 { margin: 0 0 8px; color: var(--navy); font-size: 27px; letter-spacing: -.5px; }
-  .login-card p { color: var(--muted); margin: 0 0 26px; line-height: 1.55; }
-  .field { display: grid; gap: 7px; margin-bottom: 17px; }
-  label { font-size: 13px; font-weight: 700; color: #334155; }
+
+  .login-card h1 {
+    margin: 0 0 8px;
+    color: var(--navy);
+    font-size: 27px;
+  }
+
+  .login-card p {
+    margin: 0 0 26px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .field {
+    display: grid;
+    gap: 7px;
+    margin-bottom: 17px;
+  }
+
+  label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
   input, select, textarea {
-    width: 100%; min-height: 43px; border: 1px solid #D8DEE7; border-radius: 9px;
-    padding: 10px 12px; color: var(--ink); background: white; outline: none;
+    width: 100%;
+    min-height: 43px;
+    padding: 10px 12px;
+    border: 1px solid #D8DEE7;
+    border-radius: 9px;
+    outline: none;
+    color: var(--ink);
+    background: white;
   }
-  input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px #00A7E120; }
-  .primary-btn, .secondary-btn, .outline-btn, .danger-btn, .icon-btn {
-    border: 0; border-radius: 9px; min-height: 42px; padding: 10px 16px; font-weight: 700;
-    transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px #00A7E120;
   }
+
+  .primary-btn, .secondary-btn, .outline-btn, .icon-btn {
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 9px;
+    font-weight: 700;
+    transition: transform .12s ease, background .12s ease;
+  }
+
   button:hover { transform: translateY(-1px); }
+
   .primary-btn { color: white; background: var(--navy); }
   .primary-btn:hover { background: #074568; }
   .secondary-btn { color: white; background: var(--blue-dark); }
   .secondary-btn:hover { background: #0B639F; }
   .outline-btn { color: var(--navy); background: white; border: 1px solid #CBD5E1; }
   .outline-btn:hover { background: #F3F7FA; }
-  .danger-btn { color: #9D2025; background: #FFF0F0; }
-  .icon-btn { width: 38px; height: 38px; min-height: 38px; padding: 0; display: grid; place-items: center;
-    color: var(--navy); background: #EAF6FB; font-size: 21px; }
-  .full { width: 100%; }
-  .demo-hint { margin-top: 15px; padding: 11px 12px; background: #F2F8FB; border-radius: 9px; color: #526579; font-size: 12px; line-height: 1.5; }
-
-  /* Main shell */
-  .topbar {
-    height: 70px; background: white; border-bottom: 1px solid var(--line); display: flex;
-    align-items: center; justify-content: space-between; padding: 0 34px; position: sticky; top: 0; z-index: 5;
+  .icon-btn {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    min-height: 38px;
+    place-items: center;
+    padding: 0;
+    color: var(--navy);
+    background: #EAF6FB;
+    font-size: 21px;
   }
-  .top-brand { display: flex; align-items: center; gap: 12px; color: var(--navy); font-weight: 800; letter-spacing: -.2px; }
-  .small-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--blue); color: white;
-    display: grid; place-items: center; font-weight: 800; }
-  .top-right { display: flex; align-items: center; gap: 14px; color: #526174; font-size: 13px; }
-  .avatar { width: 34px; height: 34px; background: #EDE6F4; border-radius: 50%; color: var(--purple);
-    display: grid; place-items: center; font-weight: 800; }
-  .signout { border: 0; background: transparent; color: var(--blue-dark); font-weight: 700; padding: 8px; }
-  .page { max-width: 1320px; margin: 0 auto; padding: 30px 32px 50px; }
-  .welcome-row { display: flex; justify-content: space-between; gap: 20px; align-items: flex-end; margin-bottom: 24px; }
-  .welcome-row h1 { color: var(--navy); margin: 0 0 6px; font-size: 27px; letter-spacing: -.5px; }
+
+  .full { width: 100%; }
+
+  .demo-hint {
+    margin-top: 15px;
+    padding: 11px 12px;
+    border-radius: 9px;
+    color: #526579;
+    background: #F2F8FB;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* Main page */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    height: 70px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 34px;
+    border-bottom: 1px solid var(--line);
+    background: white;
+  }
+
+  .top-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--navy);
+    font-weight: 800;
+  }
+
+  .small-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
+
+  .top-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #526174;
+    font-size: 13px;
+  }
+
+  .avatar {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--purple);
+    background: #EDE6F4;
+    font-weight: 800;
+  }
+
+  .signout {
+    padding: 8px;
+    border: 0;
+    color: var(--blue-dark);
+    background: transparent;
+    font-weight: 700;
+  }
+
+  .page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 30px 32px 50px;
+  }
+
+  .welcome-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .welcome-row h1 {
+    margin: 0 0 6px;
+    color: var(--navy);
+    font-size: 27px;
+  }
+
   .welcome-row p { margin: 0; color: var(--muted); }
-  .prototype-tag { color: var(--purple); background: #F2ECF7; border: 1px solid #E5D8F0; padding: 8px 12px;
-    border-radius: 100px; font-weight: 700; font-size: 12px; white-space: nowrap; }
-  .layout { display: grid; grid-template-columns: minmax(250px, .78fr) minmax(500px, 1.7fr); gap: 22px; align-items: start; }
-  .card { background: white; border: 1px solid var(--line); border-radius: 15px; box-shadow: 0 4px 14px #16324a08; }
+
+  .prototype-tag {
+    padding: 8px 12px;
+    border: 1px solid #E5D8F0;
+    border-radius: 100px;
+    color: var(--purple);
+    background: #F2ECF7;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(250px, .78fr) minmax(500px, 1.7fr);
+    gap: 22px;
+    align-items: start;
+  }
+
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 4px 14px #16324a08;
+  }
+
+  .card h2 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 17px;
+  }
+
   .actions-card { padding: 23px; }
-  .card h2 { margin: 0; font-size: 17px; color: var(--navy); }
-  .section-intro { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 7px 0 20px; }
-  .action-tile { width: 100%; text-align: left; padding: 16px; border: 1px solid var(--line); border-radius: 12px;
-    background: white; display: flex; gap: 13px; align-items: center; margin-bottom: 12px; color: var(--ink); }
-  .action-tile:hover { border-color: #A7DCEE; box-shadow: 0 4px 15px #00A7E112; }
-  .action-icon { flex: 0 0 43px; height: 43px; display: grid; place-items: center; border-radius: 12px; font-size: 19px; }
-  .action-icon.work { background: #E4F7FC; color: var(--blue-dark); }
-  .action-icon.leave { background: #F2ECF7; color: var(--purple); }
-  .action-copy strong { display: block; color: var(--navy); font-size: 14px; margin-bottom: 3px; }
+
+  .section-intro {
+    margin: 7px 0 20px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .action-tile {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 12px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink);
+    background: white;
+    text-align: left;
+  }
+
+  .action-tile:hover {
+    border-color: #A7DCEE;
+    box-shadow: 0 4px 15px #00A7E112;
+  }
+
+  .action-icon {
+    display: grid;
+    flex: 0 0 43px;
+    height: 43px;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 19px;
+  }
+
+  .action-icon.work { color: var(--blue-dark); background: #E4F7FC; }
+  .action-icon.leave { color: var(--purple); background: #F2ECF7; }
+
+  .action-copy strong {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--navy);
+    font-size: 14px;
+  }
+
   .action-copy span { color: var(--muted); font-size: 12px; }
   .action-arrow { margin-left: auto; color: #8A99A8; font-size: 20px; }
-  .integration-note { margin-top: 19px; padding: 14px; border-radius: 10px; background: #F7F9FB; color: #627287;
-    font-size: 12px; line-height: 1.55; }
-  .integration-note strong { display: block; color: var(--navy); margin-bottom: 4px; }
-  .calendar-card { overflow: hidden; }
-  .calendar-head { padding: 21px 23px 17px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-  .calendar-head h2 { font-size: 18px; }
-  .month-controls { display: flex; align-items: center; gap: 10px; }
-  .month-label { color: #46566A; min-width: 120px; text-align: center; font-size: 14px; font-weight: 700; }
-  .nav-month { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: white; color: var(--navy); font-size: 18px; }
-  .calendar-grid { padding: 0 19px 20px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-  .weekday { color: #8793A1; text-align: center; font-size: 11px; font-weight: 700; padding: 8px 2px 10px; text-transform: uppercase; letter-spacing: .04em; }
-  .day {
-    min-height: 91px; border-top: 1px solid #EDF0F4; border-right: 1px solid #EDF0F4; padding: 7px 6px 5px;
-    overflow: hidden; background: white;
+
+  .integration-note {
+    margin-top: 19px;
+    padding: 14px;
+    border-radius: 10px;
+    color: #627287;
+    background: #F7F9FB;
+    font-size: 12px;
+    line-height: 1.55;
   }
+
+  .integration-note strong {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--navy);
+  }
+
+  /* Calendar */
+  .calendar-card { overflow: hidden; }
+
+  .calendar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 21px 23px 17px;
+  }
+
+  .calendar-head h2 { font-size: 18px; }
+
+  .month-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .month-label {
+    min-width: 120px;
+    color: #46566A;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .nav-month {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--navy);
+    background: white;
+    font-size: 18px;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    padding: 0 19px 20px;
+  }
+
+  .weekday {
+    padding: 8px 2px 10px;
+    color: #8793A1;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .day {
+    min-height: 91px;
+    overflow: hidden;
+    padding: 7px 6px 5px;
+    border-top: 1px solid #EDF0F4;
+    border-right: 1px solid #EDF0F4;
+    background: white;
+  }
+
   .day:nth-child(7n + 1) { border-left: 1px solid #EDF0F4; }
   .day.empty { background: #FAFBFC; }
-  .day-number { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 50%; color: #536275; font-size: 12px; margin-bottom: 4px; }
-  .day.today .day-number { background: var(--navy); color: white; font-weight: 800; }
-  .event {
-    display: block; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-    margin: 3px 0; padding: 4px 5px; border-radius: 5px; text-align: left; font-size: 10px; font-weight: 700; border: 0;
+
+  .day-number {
+    display: grid;
+    width: 25px;
+    height: 25px;
+    place-items: center;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    color: #536275;
+    font-size: 12px;
   }
-  .event.work { background: #E3F6FB; color: #08668E; }
-  .event.leave { background: #F1EAF7; color: #613389; }
-  .legend { display: flex; gap: 17px; padding: 0 23px 18px; color: #667487; font-size: 11px; }
+
+  .day.today .day-number {
+    color: white;
+    background: var(--navy);
+    font-weight: 800;
+  }
+
+  .event {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    margin: 3px 0;
+    padding: 4px 5px;
+    border: 0;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .event.work { color: #08668E; background: #E3F6FB; }
+  .event.leave { color: var(--purple); background: #F1EAF7; }
+
+  .legend {
+    display: flex;
+    gap: 17px;
+    padding: 0 23px 18px;
+    color: #667487;
+    font-size: 11px;
+  }
+
   .legend span { display: flex; align-items: center; gap: 6px; }
-  .legend i { width: 9px; height: 9px; display: inline-block; border-radius: 3px; }
-  .today-summary { margin: 0 23px 21px; border-top: 1px solid var(--line); padding-top: 16px; }
-  .summary-title { font-size: 12px; font-weight: 800; color: var(--navy); margin-bottom: 10px; }
+  .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; }
+
+  .today-summary {
+    margin: 0 23px 21px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .summary-title {
+    margin-bottom: 10px;
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
   .summary-list { display: flex; flex-wrap: wrap; gap: 8px; }
-  .summary-chip { background: #F5F8FA; border: 1px solid #E8EDF2; color: #526174; border-radius: 7px; padding: 7px 9px; font-size: 11px; }
+
+  .summary-chip {
+    padding: 7px 9px;
+    border: 1px solid #E8EDF2;
+    border-radius: 7px;
+    color: #526174;
+    background: #F5F8FA;
+    font-size: 11px;
+  }
+
   .summary-chip strong { color: var(--navy); }
   .empty-summary { color: #8996A4; font-size: 12px; }
 
+  /* Monthly hours card */
+  .monthly-total-card {
+    grid-column: 2;
+    overflow: hidden;
+  }
+
+  .hours-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 23px;
+  }
+
+  .hours-card-head p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .hours-total {
+    padding: 9px 13px;
+    border-radius: 10px;
+    color: var(--navy);
+    background: #E4F7FC;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .hours-total strong { font-size: 20px; }
+  .hours-total span { display: block; color: #526174; font-size: 10px; }
+
+  .hours-table-wrap {
+    overflow-x: auto;
+    padding: 0 23px 20px;
+  }
+
+  .hours-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .hours-table th, .hours-table td {
+    padding: 11px 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  .hours-table th {
+    color: #718096;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+
+  .hours-table th:last-child, .hours-table td:last-child { text-align: right; }
+
+  .hours-table .empty-hours {
+    padding: 20px 8px;
+    color: #8996A4;
+    text-align: center;
+  }
+
   /* Dialogs */
-  .overlay { position: fixed; inset: 0; background: #071B2DB8; z-index: 10; display: grid; place-items: center; padding: 20px; }
-  .modal { width: min(760px, 100%); max-height: min(90vh, 850px); display: flex; flex-direction: column;
-    background: white; border-radius: 16px; box-shadow: 0 20px 70px #00182c50; overflow: hidden; }
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: #071B2DB8;
+  }
+
+  .modal {
+    display: flex;
+    width: min(760px, 100%);
+    max-height: min(90vh, 850px);
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 20px 70px #00182c50;
+  }
+
   .modal.compact { width: min(580px, 100%); }
-  .modal-head { padding: 21px 24px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: flex-start; }
-  .modal-head h2 { color: var(--navy); font-size: 19px; margin: 0 0 5px; }
-  .modal-head p { color: var(--muted); margin: 0; font-size: 12px; }
-  .close-btn { border: 0; background: transparent; color: #6B7785; font-size: 25px; line-height: 1; padding: 0 4px; }
-  .modal-body { padding: 20px 24px; overflow: auto; }
-  .entry-row { border: 1px solid #E5EAF0; border-radius: 11px; padding: 14px; margin-bottom: 12px; background: #FCFDFE; }
-  .row-head { display: flex; align-items: center; justify-content: space-between; color: var(--navy); font-weight: 800; font-size: 12px; margin-bottom: 12px; }
-  .remove-row { border: 0; background: transparent; color: #A23A3E; font-weight: 700; font-size: 12px; }
-  .form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+
+  .modal-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 21px 24px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .modal-head h2 {
+    margin: 0 0 5px;
+    color: var(--navy);
+    font-size: 19px;
+  }
+
+  .modal-head p { margin: 0; color: var(--muted); font-size: 12px; }
+
+  .close-btn {
+    padding: 0 4px;
+    border: 0;
+    color: #6B7785;
+    background: transparent;
+    font-size: 25px;
+    line-height: 1;
+  }
+
+  .modal-body { overflow: auto; padding: 20px 24px; }
+
+  .entry-row {
+    margin-bottom: 12px;
+    padding: 14px;
+    border: 1px solid #E5EAF0;
+    border-radius: 11px;
+    background: #FCFDFE;
+  }
+
+  .row-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  .remove-row {
+    border: 0;
+    color: #A23A3E;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
   .form-grid .field { margin: 0; }
   .field small { color: #8591A0; font-size: 10px; font-weight: 400; }
-  .modal-actions { padding: 15px 24px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 9px; }
+
+  .modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 15px 24px;
+    border-top: 1px solid var(--line);
+  }
+
   .spacer { flex: 1; }
-  .add-row { display: flex; align-items: center; gap: 8px; color: var(--blue-dark); background: white; border: 0; padding: 8px 0; font-weight: 800; font-size: 13px; }
-  .add-row .plus { width: 25px; height: 25px; border-radius: 50%; display: grid; place-items: center; color: white; background: var(--blue-dark); font-size: 18px; }
-  .leave-date-card { border: 1px solid var(--line); padding: 15px; border-radius: 11px; margin-bottom: 12px; position: relative; }
+
+  .add-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border: 0;
+    color: var(--blue-dark);
+    background: white;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .add-row .plus {
+    display: grid;
+    width: 25px;
+    height: 25px;
+    place-items: center;
+    border-radius: 50%;
+    color: white;
+    background: var(--blue-dark);
+    font-size: 18px;
+  }
+
+  .leave-date-card {
+    position: relative;
+    margin-bottom: 12px;
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+  }
+
   .leave-date-card .form-grid { grid-template-columns: 1fr 1fr; }
-  .leave-date-card .remove-row { position: absolute; right: 13px; top: 13px; }
+
+  .leave-date-card .remove-row {
+    position: absolute;
+    top: 13px;
+    right: 13px;
+  }
+
   .add-date { margin: 0 0 16px; }
+
+  /* Notifications */
   .toast {
-    position: fixed; z-index: 20; right: 24px; bottom: 24px; background: #123C32; color: white;
-    border-radius: 10px; padding: 13px 17px; box-shadow: 0 10px 30px #00182c40;
-    display: flex; gap: 9px; align-items: center; font-size: 13px; font-weight: 700;
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 17px;
+    border-radius: 10px;
+    color: white;
+    background: #123C32;
+    box-shadow: 0 10px 30px #00182c40;
+    font-size: 13px;
+    font-weight: 700;
     animation: arrive .2s ease-out;
   }
-  .toast .check { width: 21px; height: 21px; border-radius: 50%; background: #2EB783; display: grid; place-items: center; }
-  @keyframes arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .footnote { text-align: center; color: #94A0AD; font-size: 11px; padding: 17px 0 0; }
+
+  .toast .check {
+    display: grid;
+    width: 21px;
+    height: 21px;
+    place-items: center;
+    border-radius: 50%;
+    background: #2EB783;
+  }
+
+  @keyframes arrive {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .footnote {
+    padding: 17px 0 0;
+    color: #94A0AD;
+    font-size: 11px;
+    text-align: center;
+  }
+
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
+    .monthly-total-card { grid-column: 1; }
     .actions-card { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
-    .actions-card h2, .actions-card .section-intro, .integration-note { grid-column: 1 / -1; }
+    .actions-card h2, .actions-card .section-intro, .integration-note {
+      grid-column: 1 / -1;
+    }
   }
+
   @media (max-width: 620px) {
-    .topbar { padding: 0 16px; height: 62px; }
+    .topbar { height: 62px; padding: 0 16px; }
     .top-right .employee-name { display: none; }
     .page { padding: 22px 14px 34px; }
     .welcome-row { align-items: flex-start; flex-direction: column; }
     .welcome-row h1 { font-size: 23px; }
     .actions-card { display: block; padding: 18px; }
-    .calendar-head { padding: 17px 14px 12px; align-items: flex-start; flex-direction: column; }
+    .calendar-head {
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 17px 14px 12px;
+    }
     .calendar-grid { padding: 0 9px 12px; }
     .day { min-height: 71px; padding: 5px 3px; }
     .day-number { width: 21px; height: 21px; font-size: 11px; }
-    .event { font-size: 9px; padding: 3px; }
+    .event { padding: 3px; font-size: 9px; }
     .legend { padding: 0 14px 14px; }
     .today-summary { margin: 0 14px 16px; }
+    .hours-card-head { padding: 17px 14px; }
+    .hours-table-wrap { padding: 0 14px 16px; }
     .overlay { padding: 8px; }
     .modal { max-height: 96vh; }
-    .modal-head, .modal-body { padding-left: 16px; padding-right: 16px; }
-    .modal-actions { padding: 12px 16px; flex-wrap: wrap; }
+    .modal-head, .modal-body { padding-right: 16px; padding-left: 16px; }
+    .modal-actions { flex-wrap: wrap; padding: 12px 16px; }
     .form-grid { grid-template-columns: 1fr 1fr; }
     .leave-date-card .form-grid { grid-template-columns: 1fr; }
     .modal-actions .spacer { display: none; }
     .modal-actions button { flex: 1; }
   }
+
   @media (max-width: 390px) {
     .form-grid { grid-template-columns: 1fr; }
     .month-label { min-width: 100px; }
@@ -206,37 +745,52 @@
 </style>
 </head>
 <body>
+
 <section id="loginScreen" class="login-screen">
   <form id="loginForm" class="login-card">
     <div class="brand-mark">T</div>
     <h1>Time &amp; Leave</h1>
     <p>One place to record work time and leave. Sign in to view your employee calendar.</p>
+
     <div class="field">
       <label for="email">Work email</label>
-      <input id="email" type="email" placeholder="name@company.com" value="alex.morgan@company.com" required>
+      <input id="email" type="email" placeholder="name@company.com"
+             value="alex.morgan@company.com" required>
     </div>
+
     <div class="field">
       <label for="password">Password</label>
-      <input id="password" type="password" placeholder="Enter any password" value="prototype" required>
+      <input id="password" type="password" placeholder="Enter any password"
+             value="prototype" required>
     </div>
+
     <button class="primary-btn full" type="submit">Sign in</button>
-    <div class="demo-hint"><strong>Prototype sign-in:</strong> use the prefilled demo details. This screen does not authenticate against a company account.</div>
+
+    <div class="demo-hint">
+      <strong>Prototype sign-in:</strong> use the prefilled demo details.
+      This screen does not authenticate against a company account.
+    </div>
   </form>
 </section>
 
 <div id="app" class="hidden">
   <header class="topbar">
-    <div class="top-brand"><span class="small-mark">T</span><span>Time &amp; Leave</span></div>
+    <div class="top-brand">
+      <span class="small-mark">T</span>
+      <span>Time &amp; Leave</span>
+    </div>
+
     <div class="top-right">
       <span class="avatar" id="avatar">AM</span>
       <span class="employee-name" id="employeeName">Alex Morgan</span>
       <button class="signout" id="signout">Sign out</button>
     </div>
   </header>
+
   <main class="page">
     <div class="welcome-row">
       <div>
-        <h1 id="welcomeTitle">Good morning, Alex</h1>
+        <h1 id="welcomeTitle">Welcome, Alex</h1>
         <p>Log your work and keep track of your time away.</p>
       </div>
       <span class="prototype-tag">Prototype · Demo data saved in this browser</span>
@@ -245,55 +799,112 @@
     <div class="layout">
       <section class="card actions-card">
         <h2>Time and leave</h2>
-        <p class="section-intro">Choose an action to add an entry to your employee calendar.</p>
-        <button class="action-tile" id="openWork">
+        <p class="section-intro">
+          Choose an action to add an entry to your employee calendar.
+        </p>
+
+        <button class="action-tile" id="openWork" type="button">
           <span class="action-icon work">◷</span>
-          <span class="action-copy"><strong>Add work time</strong><span>Record a project, job, and activity</span></span>
+          <span class="action-copy">
+            <strong>Add work time</strong>
+            <span>Record a project, job, activity, and hours</span>
+          </span>
           <span class="action-arrow">›</span>
         </button>
-        <button class="action-tile" id="openLeave">
+
+        <button class="action-tile" id="openLeave" type="button">
           <span class="action-icon leave">▣</span>
-          <span class="action-copy"><strong>Request leave</strong><span>Submit PTO, sick, or half-day leave</span></span>
+          <span class="action-copy">
+            <strong>Request leave</strong>
+            <span>Submit PTO, sick, or half-day leave</span>
+          </span>
           <span class="action-arrow">›</span>
         </button>
-        <div class="integration-note"><strong>Integration status</strong>UKG, Freshservice, and Azure DevOps connections are planned for a future version. Entries in this prototype stay in this browser.</div>
+
+        <div class="integration-note">
+          <strong>Integration status</strong>
+          UKG, Freshservice, and Azure DevOps connections are planned for a
+          future version. Entries in this prototype stay in this browser.
+        </div>
       </section>
 
       <section class="card calendar-card">
         <div class="calendar-head">
           <div><h2>My calendar</h2></div>
           <div class="month-controls">
-            <button class="nav-month" id="prevMonth" aria-label="Previous month">‹</button>
+            <button class="nav-month" id="prevMonth" type="button"
+                    aria-label="Previous month">‹</button>
             <span class="month-label" id="monthLabel"></span>
-            <button class="nav-month" id="nextMonth" aria-label="Next month">›</button>
+            <button class="nav-month" id="nextMonth" type="button"
+                    aria-label="Next month">›</button>
           </div>
         </div>
+
         <div id="calendarGrid" class="calendar-grid"></div>
+
         <div class="legend">
           <span><i style="background:#00A7E1"></i>Work time</span>
           <span><i style="background:#613389"></i>Leave</span>
         </div>
+
         <div class="today-summary">
           <div class="summary-title">Selected month at a glance</div>
           <div id="monthSummary" class="summary-list"></div>
         </div>
       </section>
+
+      <section class="card monthly-total-card">
+        <div class="hours-card-head">
+          <div>
+            <h2>Monthly logged hours</h2>
+            <p id="hoursMonthLabel"></p>
+          </div>
+          <div class="hours-total">
+            <strong id="monthHoursTotal">0.00</strong>
+            <span>hours</span>
+          </div>
+        </div>
+
+        <div class="hours-table-wrap">
+          <table class="hours-table">
+            <thead>
+              <tr>
+                <th>Project Name</th>
+                <th>Job name</th>
+                <th>Activity Type</th>
+                <th>Hours</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyHoursRows"></tbody>
+          </table>
+        </div>
+      </section>
     </div>
+
     <div class="footnote">Prototype only · No company systems are connected</div>
   </main>
 </div>
 
-<!-- Work time dialog -->
-<div id="workOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="workTitle">
+<!-- Add work time dialog -->
+<div id="workOverlay" class="overlay hidden" role="dialog" aria-modal="true"
+     aria-labelledby="workTitle">
   <section class="modal">
     <header class="modal-head">
-      <div><h2 id="workTitle">Add work time</h2><p>Add one or more work entries. Required fields are marked with an asterisk.</p></div>
-      <button class="close-btn" data-close="workOverlay" aria-label="Close">×</button>
+      <div>
+        <h2 id="workTitle">Add work time</h2>
+        <p>Add one or more work entries. Required fields are marked with an asterisk.</p>
+      </div>
+      <button class="close-btn" data-close="workOverlay" type="button"
+              aria-label="Close">×</button>
     </header>
+
     <form id="workForm" class="modal-body">
       <div id="workRows"></div>
-      <button type="button" id="addWorkRow" class="add-row"><span class="plus">+</span> Add another entry</button>
+      <button type="button" id="addWorkRow" class="add-row">
+        <span class="plus">+</span> Add another entry
+      </button>
     </form>
+
     <footer class="modal-actions">
       <button type="button" class="outline-btn" id="clearWork">Clear fields</button>
       <span class="spacer"></span>
@@ -304,16 +915,25 @@
 </div>
 
 <!-- Leave dialog -->
-<div id="leaveOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
+<div id="leaveOverlay" class="overlay hidden" role="dialog" aria-modal="true"
+     aria-labelledby="leaveTitle">
   <section class="modal compact">
     <header class="modal-head">
-      <div><h2 id="leaveTitle">Request leave</h2><p>Add dates and details for your leave request.</p></div>
-      <button class="close-btn" data-close="leaveOverlay" aria-label="Close">×</button>
+      <div>
+        <h2 id="leaveTitle">Request leave</h2>
+        <p>Add dates and details for your leave request.</p>
+      </div>
+      <button class="close-btn" data-close="leaveOverlay" type="button"
+              aria-label="Close">×</button>
     </header>
+
     <form id="leaveForm" class="modal-body">
       <div id="leaveRows"></div>
-      <button type="button" id="addLeaveDate" class="add-row add-date"><span class="plus">+</span> Add date</button>
+      <button type="button" id="addLeaveDate" class="add-row add-date">
+        <span class="plus">+</span> Add date
+      </button>
     </form>
+
     <footer class="modal-actions">
       <span class="spacer"></span>
       <button type="button" class="outline-btn" data-close="leaveOverlay">Cancel</button>
@@ -322,23 +942,37 @@
   </section>
 </div>
 
-<div id="toast" class="toast hidden" role="status"><span class="check">✓</span><span id="toastText"></span></div>
+<div id="toast" class="toast hidden" role="status">
+  <span class="check">✓</span>
+  <span id="toastText"></span>
+</div>
 
 <script>
 (() => {
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
   const today = new Date();
-  const isoToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const isoToday = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60000
+  ).toISOString().slice(0, 10);
+
   let viewYear = today.getFullYear();
   let viewMonth = today.getMonth();
   let toastTimer;
 
-  const getEntries = () => {
-    try { return JSON.parse(localStorage.getItem("timeLeavePrototypeEntries") || "[]"); }
-    catch { return []; }
-  };
-  const saveEntries = entries => localStorage.setItem("timeLeavePrototypeEntries", JSON.stringify(entries));
+  function getEntries() {
+    try {
+      return JSON.parse(localStorage.getItem("timeLeavePrototypeEntries") || "[]");
+    } catch {
+      return [];
+    }
+  }
+
+  function saveEntries(items) {
+    localStorage.setItem("timeLeavePrototypeEntries", JSON.stringify(items));
+  }
+
   let entries = getEntries();
 
   function showToast(message) {
@@ -352,6 +986,7 @@
     $("#" + id).classList.remove("hidden");
     document.body.style.overflow = "hidden";
   }
+
   function closeModal(id) {
     $("#" + id).classList.add("hidden");
     document.body.style.overflow = "";
@@ -359,41 +994,65 @@
 
   function nameFromEmail(email) {
     const raw = (email.split("@")[0] || "Employee").replace(/[._-]+/g, " ");
-    return raw.split(" ").filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join(" ");
+    return raw
+      .split(" ")
+      .filter(Boolean)
+      .map(word => word[0].toUpperCase() + word.slice(1))
+      .join(" ");
   }
+
   function enterApp() {
-    const email = $("#email").value.trim();
-    const name = nameFromEmail(email);
+    const name = nameFromEmail($("#email").value.trim());
     $("#employeeName").textContent = name;
     $("#welcomeTitle").textContent = `Welcome, ${name.split(" ")[0]}`;
-    $("#avatar").textContent = name.split(" ").map(p => p[0]).slice(0, 2).join("").toUpperCase();
+    $("#avatar").textContent = name
+      .split(" ")
+      .map(part => part[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
     $("#loginScreen").classList.add("hidden");
     $("#app").classList.remove("hidden");
     renderCalendar();
   }
 
-  $("#loginForm").addEventListener("submit", e => { e.preventDefault(); enterApp(); });
+  $("#loginForm").addEventListener("submit", event => {
+    event.preventDefault();
+    enterApp();
+  });
+
   $("#signout").addEventListener("click", () => {
     $("#app").classList.add("hidden");
     $("#loginScreen").classList.remove("hidden");
   });
+
   $("#openWork").addEventListener("click", () => {
     $("#workRows").replaceChildren();
     addWorkRow();
     openModal("workOverlay");
   });
+
   $("#openLeave").addEventListener("click", () => {
     $("#leaveRows").replaceChildren();
     openModal("leaveOverlay");
   });
 
-  $$("[data-close]").forEach(btn => btn.addEventListener("click", () => closeModal(btn.dataset.close)));
-  ["workOverlay", "leaveOverlay"].forEach(id => {
-    $("#" + id).addEventListener("click", e => { if (e.target.id === id) closeModal(id); });
+  $$("[data-close]").forEach(button => {
+    button.addEventListener("click", () => closeModal(button.dataset.close));
   });
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape") {
-      ["workOverlay", "leaveOverlay"].forEach(id => { if (!$("#" + id).classList.contains("hidden")) closeModal(id); });
+
+  ["workOverlay", "leaveOverlay"].forEach(id => {
+    $("#" + id).addEventListener("click", event => {
+      if (event.target.id === id) closeModal(id);
+    });
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      ["workOverlay", "leaveOverlay"].forEach(id => {
+        if (!$("#" + id).classList.contains("hidden")) closeModal(id);
+      });
     }
   });
 
@@ -401,182 +1060,379 @@
     const index = $("#workRows").children.length + 1;
     const row = document.createElement("div");
     row.className = "entry-row";
+
     row.innerHTML = `
-      <div class="row-head"><span>Entry ${index}</span>${index > 1 ? '<button type="button" class="remove-row">Remove</button>' : ""}</div>
+      <div class="row-head">
+        <span>Entry ${index}</span>
+        ${index > 1 ? '<button type="button" class="remove-row">Remove</button>' : ""}
+      </div>
       <div class="form-grid">
-        <div class="field"><label>Date *</label><input name="date" type="date" required value="${isoToday}"></div>
-        <div class="field"><label>Project name *</label><input name="project" type="text" placeholder="Enter project" required></div>
-        <div class="field"><label>Job name *</label><input name="job" type="text" placeholder="Enter job" required></div>
-        <div class="field"><label>Activity type *</label>
+        <div class="field">
+          <label>Date *</label>
+          <input name="date" type="date" required value="${isoToday}">
+        </div>
+        <div class="field">
+          <label>Project name *</label>
+          <input name="project" type="text" placeholder="Enter project" required>
+        </div>
+        <div class="field">
+          <label>Job name *</label>
+          <input name="job" type="text" placeholder="Enter job" required>
+        </div>
+        <div class="field">
+          <label>Activity type *</label>
           <select name="activity" required>
-            <option value="">Select activity</option><option>Development</option><option>Maintenance</option><option>Support</option><option>Meeting</option>
+            <option value="">Select activity</option>
+            <option>Development</option>
+            <option>Maintenance</option>
+            <option>Support</option>
+            <option>Meeting</option>
           </select>
         </div>
-        <div class="field"><label>Ticket number <small>(optional)</small></label><input name="ticket" type="text" placeholder="e.g. INC-10482"></div>
-        <div class="field"><label>Task ID <small>(optional)</small></label><input name="task" type="text" placeholder="e.g. 4821"></div>
-      </div>`;
-    const remove = $(".remove-row", row);
-    if (remove) remove.addEventListener("click", () => { row.remove(); renumberWorkRows(); });
+        <div class="field">
+          <label>Ticket number <small>(optional)</small></label>
+          <input name="ticket" type="text" placeholder="e.g. INC-10482">
+        </div>
+        <div class="field">
+          <label>Task ID <small>(optional)</small></label>
+          <input name="task" type="text" placeholder="e.g. 4821">
+        </div>
+        <div class="field">
+          <label>Hours *</label>
+          <input name="hours" type="number" min="0.01" step="0.01"
+                 placeholder="e.g. 1.50" required>
+        </div>
+      </div>
+    `;
+
+    const removeButton = $(".remove-row", row);
+    if (removeButton) {
+      removeButton.addEventListener("click", () => {
+        row.remove();
+        renumberWorkRows();
+      });
+    }
+
     $("#workRows").appendChild(row);
   }
+
   function renumberWorkRows() {
-    $$(".entry-row", $("#workRows")).forEach((row, i) => {
-      $(".row-head span", row).textContent = `Entry ${i + 1}`;
-      const remove = $(".remove-row", row);
-      if (i === 0 && remove) remove.remove();
-      if (i > 0 && !remove) {
-        const button = document.createElement("button");
-        button.type = "button"; button.className = "remove-row"; button.textContent = "Remove";
-        button.addEventListener("click", () => { row.remove(); renumberWorkRows(); });
-        $(".row-head", row).appendChild(button);
+    $$(".entry-row", $("#workRows")).forEach((row, index) => {
+      $(".row-head span", row).textContent = `Entry ${index + 1}`;
+      let removeButton = $(".remove-row", row);
+
+      if (index === 0 && removeButton) {
+        removeButton.remove();
+      } else if (index > 0 && !removeButton) {
+        removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "remove-row";
+        removeButton.textContent = "Remove";
+        removeButton.addEventListener("click", () => {
+          row.remove();
+          renumberWorkRows();
+        });
+        $(".row-head", row).appendChild(removeButton);
       }
     });
   }
+
   $("#addWorkRow").addEventListener("click", addWorkRow);
+
   $("#clearWork").addEventListener("click", () => {
-    $$(".entry-row", $("#workRows")).forEach((row, i) => {
-      $("input[name=date]", row).value = isoToday;
-      ["project", "job", "ticket", "task"].forEach(name => { $(`[name=${name}]`, row).value = ""; });
-      $("select[name=activity]", row).value = "";
-      if (i > 0) row.remove();
+    $$(".entry-row", $("#workRows")).forEach((row, index) => {
+      $('input[name="date"]', row).value = isoToday;
+
+      ["project", "job", "ticket", "task", "hours"].forEach(name => {
+        $(`[name="${name}"]`, row).value = "";
+      });
+
+      $('select[name="activity"]', row).value = "";
+      if (index > 0) row.remove();
     });
+
     renumberWorkRows();
   });
 
-  $("#workForm").addEventListener("submit", e => {
-    e.preventDefault();
-    if (!e.currentTarget.reportValidity()) return;
-    const rows = $$(".entry-row", $("#workRows"));
-    const newEntries = rows.map(row => ({
+  $("#workForm").addEventListener("submit", event => {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+
+    const newEntries = $$(".entry-row", $("#workRows")).map(row => ({
       kind: "work",
-      date: $("input[name=date]", row).value,
-      project: $("input[name=project]", row).value.trim(),
-      job: $("input[name=job]", row).value.trim(),
-      activity: $("select[name=activity]", row).value,
-      ticket: $("input[name=ticket]", row).value.trim(),
-      task: $("input[name=task]", row).value.trim()
+      date: $('input[name="date"]', row).value,
+      project: $('input[name="project"]', row).value.trim(),
+      job: $('input[name="job"]', row).value.trim(),
+      activity: $('select[name="activity"]', row).value,
+      ticket: $('input[name="ticket"]', row).value.trim(),
+      task: $('input[name="task"]', row).value.trim(),
+      hours: Number($('input[name="hours"]', row).value)
     }));
+
     entries = [...entries, ...newEntries];
     saveEntries(entries);
     closeModal("workOverlay");
     renderCalendar();
-    showToast(newEntries.length === 1 ? "Work time saved successfully." : `${newEntries.length} work entries saved successfully.`);
+
+    showToast(
+      newEntries.length === 1
+        ? "Work time saved successfully."
+        : `${newEntries.length} work entries saved successfully.`
+    );
   });
 
   function addLeaveRow() {
     const card = document.createElement("div");
     card.className = "leave-date-card";
+
     card.innerHTML = `
       <button type="button" class="remove-row">Remove</button>
       <div class="form-grid">
-        <div class="field"><label>Date *</label><input name="leaveDate" type="date" required value="${isoToday}"></div>
-        <div class="field"><label>Leave type *</label>
-          <select name="leaveType" required><option value="">Select leave type</option><option>PTO</option><option>Sick</option><option>Half Day</option></select>
+        <div class="field">
+          <label>Date *</label>
+          <input name="leaveDate" type="date" required value="${isoToday}">
         </div>
-        <div class="field" style="grid-column:1/-1"><label>Note <small>(optional)</small></label><textarea name="note" rows="2" placeholder="Add a note"></textarea></div>
-      </div>`;
+        <div class="field">
+          <label>Leave type *</label>
+          <select name="leaveType" required>
+            <option value="">Select leave type</option>
+            <option>PTO</option>
+            <option>Sick</option>
+            <option>Half Day</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column:1/-1">
+          <label>Note <small>(optional)</small></label>
+          <textarea name="note" rows="2" placeholder="Add a note"></textarea>
+        </div>
+      </div>
+    `;
+
     $(".remove-row", card).addEventListener("click", () => card.remove());
     $("#leaveRows").appendChild(card);
   }
+
   $("#addLeaveDate").addEventListener("click", addLeaveRow);
-  $("#leaveForm").addEventListener("submit", e => {
-    e.preventDefault();
+
+  $("#leaveForm").addEventListener("submit", event => {
+    event.preventDefault();
+
     if (!$("#leaveRows").children.length) {
       showToast("Add at least one date before submitting.");
       return;
     }
-    if (!e.currentTarget.reportValidity()) return;
+
+    if (!event.currentTarget.reportValidity()) return;
+
     const newEntries = $$(".leave-date-card", $("#leaveRows")).map(card => ({
       kind: "leave",
-      date: $("input[name=leaveDate]", card).value,
-      leaveType: $("select[name=leaveType]", card).value,
-      note: $("textarea[name=note]", card).value.trim()
+      date: $('input[name="leaveDate"]', card).value,
+      leaveType: $('select[name="leaveType"]', card).value,
+      note: $('textarea[name="note"]', card).value.trim()
     }));
+
     entries = [...entries, ...newEntries];
     saveEntries(entries);
     closeModal("leaveOverlay");
     renderCalendar();
-    showToast(newEntries.length === 1 ? "Leave request submitted successfully." : `${newEntries.length} leave dates submitted successfully.`);
+
+    showToast(
+      newEntries.length === 1
+        ? "Leave request submitted successfully."
+        : `${newEntries.length} leave dates submitted successfully.`
+    );
   });
 
   $("#prevMonth").addEventListener("click", () => {
     viewMonth--;
-    if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    if (viewMonth < 0) {
+      viewMonth = 11;
+      viewYear--;
+    }
     renderCalendar();
   });
+
   $("#nextMonth").addEventListener("click", () => {
     viewMonth++;
-    if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    if (viewMonth > 11) {
+      viewMonth = 0;
+      viewYear++;
+    }
     renderCalendar();
   });
 
   function dateKey(year, month, day) {
     return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   }
+
   function renderCalendar() {
     const grid = $("#calendarGrid");
     grid.replaceChildren();
-    $("#monthLabel").textContent = new Date(viewYear, viewMonth, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+
+    $("#monthLabel").textContent = new Date(viewYear, viewMonth, 1)
+      .toLocaleDateString(undefined, { month: "long", year: "numeric" });
+
     ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach(day => {
       const cell = document.createElement("div");
-      cell.className = "weekday"; cell.textContent = day; grid.appendChild(cell);
+      cell.className = "weekday";
+      cell.textContent = day;
+      grid.appendChild(cell);
     });
+
     const firstDay = new Date(viewYear, viewMonth, 1).getDay();
     const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-    for (let i = 0; i < firstDay; i++) {
-      const blank = document.createElement("div"); blank.className = "day empty"; grid.appendChild(blank);
+
+    for (let index = 0; index < firstDay; index++) {
+      const blank = document.createElement("div");
+      blank.className = "day empty";
+      grid.appendChild(blank);
     }
+
     for (let day = 1; day <= daysInMonth; day++) {
       const cell = document.createElement("div");
       const key = dateKey(viewYear, viewMonth, day);
       cell.className = "day" + (key === isoToday ? " today" : "");
-      const num = document.createElement("div"); num.className = "day-number"; num.textContent = day;
-      cell.appendChild(num);
-      entries.filter(entry => entry.date === key).slice(0, 2).forEach(entry => {
+
+      const number = document.createElement("div");
+      number.className = "day-number";
+      number.textContent = day;
+      cell.appendChild(number);
+
+      const dayEntries = entries.filter(entry => entry.date === key);
+
+      dayEntries.slice(0, 2).forEach(entry => {
         const event = document.createElement("button");
         event.type = "button";
         event.className = `event ${entry.kind}`;
         event.title = entry.kind === "work"
-          ? `${entry.activity}: ${entry.project} / ${entry.job}${entry.ticket ? " · " + entry.ticket : ""}`
+          ? `${entry.activity}: ${entry.project} / ${entry.job}`
           : `${entry.leaveType}${entry.note ? " · " + entry.note : ""}`;
-        event.textContent = entry.kind === "work" ? `${entry.activity}: ${entry.project}` : entry.leaveType;
+        event.textContent = entry.kind === "work"
+          ? `${entry.activity}: ${entry.project}`
+          : entry.leaveType;
         cell.appendChild(event);
       });
-      const overflow = entries.filter(entry => entry.date === key).length - 2;
+
+      const overflow = dayEntries.length - 2;
       if (overflow > 0) {
-        const more = document.createElement("div"); more.style.cssText = "font-size:9px;color:#7A8795;padding:2px 4px;";
-        more.textContent = `+${overflow} more`; cell.appendChild(more);
+        const more = document.createElement("div");
+        more.style.cssText = "font-size:9px;color:#7A8795;padding:2px 4px;";
+        more.textContent = `+${overflow} more`;
+        cell.appendChild(more);
       }
+
       grid.appendChild(cell);
     }
+
     const usedCells = firstDay + daysInMonth;
-    const tail = (7 - usedCells % 7) % 7;
-    for (let i = 0; i < tail; i++) {
-      const blank = document.createElement("div"); blank.className = "day empty"; grid.appendChild(blank);
+    const trailingCells = (7 - usedCells % 7) % 7;
+
+    for (let index = 0; index < trailingCells; index++) {
+      const blank = document.createElement("div");
+      blank.className = "day empty";
+      grid.appendChild(blank);
     }
+
     renderSummary();
+    renderMonthlyHours();
   }
+
   function renderSummary() {
     const monthEntries = entries.filter(entry => {
       const date = new Date(`${entry.date}T12:00:00`);
-      return date.getFullYear() === viewYear && date.getMonth() === viewMonth;
+      return date.getFullYear() === viewYear &&
+             date.getMonth() === viewMonth;
     });
-    const workCount = monthEntries.filter(e => e.kind === "work").length;
-    const leaveCount = monthEntries.filter(e => e.kind === "leave").length;
+
+    const workCount = monthEntries.filter(entry => entry.kind === "work").length;
+    const leaveCount = monthEntries.filter(entry => entry.kind === "leave").length;
     const container = $("#monthSummary");
     container.replaceChildren();
+
     if (!monthEntries.length) {
-      const empty = document.createElement("span"); empty.className = "empty-summary"; empty.textContent = "No entries for this month yet.";
-      container.appendChild(empty); return;
+      const empty = document.createElement("span");
+      empty.className = "empty-summary";
+      empty.textContent = "No entries for this month yet.";
+      container.appendChild(empty);
+      return;
     }
-    [[`${workCount}`, "work entries"], [`${leaveCount}`, "leave dates"]].forEach(([count, label]) => {
-      const chip = document.createElement("span"); chip.className = "summary-chip";
-      const strong = document.createElement("strong"); strong.textContent = count;
-      chip.append(strong, document.createTextNode(` ${label}`)); container.appendChild(chip);
+
+    [[workCount, "work entries"], [leaveCount, "leave dates"]].forEach(([count, label]) => {
+      const chip = document.createElement("span");
+      chip.className = "summary-chip";
+
+      const strong = document.createElement("strong");
+      strong.textContent = count;
+
+      chip.append(strong, document.createTextNode(` ${label}`));
+      container.appendChild(chip);
     });
   }
 
-  // Start in the prototype's sign-in state; clicking Sign in opens the demo workspace.
+  function renderMonthlyHours() {
+    const monthEntries = entries.filter(entry => {
+      if (entry.kind !== "work" || !entry.date) return false;
+      const date = new Date(`${entry.date}T12:00:00`);
+      return date.getFullYear() === viewYear &&
+             date.getMonth() === viewMonth;
+    });
+
+    $("#hoursMonthLabel").textContent = new Date(viewYear, viewMonth, 1)
+      .toLocaleDateString(undefined, { month: "long", year: "numeric" });
+
+    const groups = new Map();
+
+    monthEntries.forEach(entry => {
+      const project = (entry.project || "").trim();
+      const job = (entry.job || "").trim();
+      const activity = (entry.activity || "").trim();
+
+      const key = [project, job, activity]
+        .map(value => value.toLocaleLowerCase())
+        .join("|");
+
+      if (!groups.has(key)) {
+        groups.set(key, { project, job, activity, hours: 0 });
+      }
+
+      groups.get(key).hours += Number(entry.hours) || 0;
+    });
+
+    const rows = [...groups.values()].sort((a, b) =>
+      a.project.localeCompare(b.project) ||
+      a.job.localeCompare(b.job) ||
+      a.activity.localeCompare(b.activity)
+    );
+
+    const total = rows.reduce((sum, row) => sum + row.hours, 0);
+    $("#monthHoursTotal").textContent = total.toFixed(2);
+
+    const tbody = $("#monthlyHoursRows");
+    tbody.replaceChildren();
+
+    if (!rows.length) {
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 4;
+      td.className = "empty-hours";
+      td.textContent = "No work hours logged for this month.";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+
+    rows.forEach(row => {
+      const tr = document.createElement("tr");
+
+      [row.project, row.job, row.activity, row.hours.toFixed(2)].forEach(value => {
+        const td = document.createElement("td");
+        td.textContent = value;
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    });
+  }
 })();
 </script>
 </body>
